@@ -18,9 +18,12 @@ const UserLogin = () => {
     event.preventDefault();
     const results = await dispatch(fetchUserDetails({email:email,password:password}));
     console.log("Results - ",results.payload);
-    // if (password === "") {
-    //   setFieldErrors("Please enter your password");
-    // } 
+    if (password === "") {
+      setFieldErrors("Please enter your password");
+    } 
+    else if(email===""){
+      setFieldErrors("Please enter your email");
+    }
     // else if (email === "sreesumi007@gmail.com" && password === "sathyadev") {
     //   localStorage.setItem("UserLogin", "true");
     //   navigate("/user");
@@ -29,7 +32,7 @@ const UserLogin = () => {
     //       navigate("/student");
       
     // }
-    if(results.payload.userType==="admin"){
+    else if(results.payload.userType==="admin"){
         localStorage.setItem("UserLogin","true");
         navigate("/user");
 
@@ -66,6 +69,7 @@ const UserLogin = () => {
                   aria-describedby="emailEntry"
                   placeholder="Enter email"
                   onChange={(e) => {
+                    setFieldErrors("");
                     setEmail(e.target.value);
                   }}
                 />
