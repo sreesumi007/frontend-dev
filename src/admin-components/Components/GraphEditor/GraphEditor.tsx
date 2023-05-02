@@ -481,7 +481,7 @@ const GraphEditor = () => {
                 id="logout"
                 onClick={() => {
                   console.log("logout triggered");
-                  localStorage.setItem("UserLogin", "false");
+                  localStorage.removeItem("admin", "false");
                   navigate("/");
                 }}
                 style={{ float: "right" }}

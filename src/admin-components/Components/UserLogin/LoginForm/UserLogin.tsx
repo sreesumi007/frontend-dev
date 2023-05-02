@@ -32,12 +32,12 @@ const UserLogin = () => {
     //       navigate("/student");
       
     // }
-    else if(results.payload.userType==="admin"){
-        localStorage.setItem("UserLogin","true");
+    else if(results.payload.userType==="ADMIN"){
+        localStorage.setItem("admin",results.payload.token);
         navigate("/user");
 
       }
-    else if(results.payload.userType==="student"){
+    else if(results.payload.userType==="STUDENT"){
         // window.location.href = "http://localhost:3000/"
         navigate("/student");
       }
