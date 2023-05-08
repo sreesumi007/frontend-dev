@@ -3,11 +3,9 @@ import axios from "axios";
 import { RootState } from "../config/store";
 
 interface HintsSave {
-  hints: string;
   response:string;
 };
 const initialState:HintsSave={
-    hints:"",
     response:""
 };
 
