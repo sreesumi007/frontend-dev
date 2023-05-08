@@ -20,6 +20,7 @@ function App() {
       if (results.payload === false) {
         navigate("/user");
       } else if(results.payload === true) {
+        localStorage.removeItem("admin");
         navigate("/");
       }
       else

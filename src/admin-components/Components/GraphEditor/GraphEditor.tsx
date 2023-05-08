@@ -31,6 +31,7 @@ import {
 } from "../../store/adminAppJSONFormation";
 import { hintsWithOrder } from "../../store/slices/hintsWithOrderSlice";
 import { useNavigate } from "react-router-dom";
+import { saveHintsFromUser } from "../../store/slices/saveHintsCollectionSlice";
 const GraphEditor = () => {
   const appOperations = useAppSelector(appCommonSliceRes);
   const adminAppJson = useAppSelector(adminAppJSON);
@@ -98,28 +99,31 @@ const GraphEditor = () => {
     };
   }, []);
   // Clear LocalStorage on reload - Ends
-  const adminAppJSONFormation = (event: any) => {
+  const adminAppJSONFormation = async (event: any) => {
     event.preventDefault();
+    let hintsString = JSON.stringify(hints);
    
-    console.log("Hints with Order -", JSON.stringify(hints));
+    console.log("Hints with Order -", hintsString);
     console.log("Admin App Json -", JSON.stringify(adminAppJson));
-      const saveHints = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(hints)
-      };
-      const saveQuesAndAns = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(adminAppJson)
-      };
-      fetch(
-        "http://localhost:8080/api/admin/saveHints",
-        saveHints
-      )
-        .then((response) => response.text())
-        .then((data) => console.log(data))
-        .catch((error) => console.error(error));
+    const saveHintsCollection = await dispatch(saveHintsFromUser(hintsString));
+    console.log("saveHintsCollection Result - ",saveHintsCollection.payload);
+      // const saveHints = {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(hints)
+      // };
+      // const saveQuesAndAns = {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(adminAppJson)
+      // };
+      // fetch(
+      //   "http://localhost:8080/api/admin/saveHints",
+      //   saveHints
+      // )
+      //   .then((response) => response.text())
+      //   .then((data) => console.log(data))
+      //   .catch((error) => console.error(error));
         $("#" + iden.SaveGraph).click();
   };
 
@@ -312,7 +316,7 @@ const GraphEditor = () => {
       dispatch(toggleAddHints(false));
       graph.clear();
       // localStorage.clear();
-      window.location.reload();
+      // window.location.reload();
     });
 
     $("#" + iden.ClearGraph).click(() => {
@@ -500,7 +504,9 @@ const GraphEditor = () => {
                 onClick={() => {
                   console.log("logout triggered");
                   localStorage.removeItem("admin");
+                  window.location.reload();
                   navigate("/");
+                  
                 }}
                 style={{ float: "right" }}
               >

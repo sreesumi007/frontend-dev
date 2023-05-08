@@ -7,6 +7,7 @@ import loginAuthenticationSlice from "../../admin-components/store/slices/loginA
 import quesMultipleChoiceSlice from "../../admin-components/store/slices/quesMultipleChoiceSlice";
 import textHintSlice from "../../admin-components/store/slices/textHintSlice";
 import sessionValidationSlice from '../../admin-components/store/slices/sessionValidationSlice';
+import saveHintsCollectionSlice from '../../admin-components/store/slices/saveHintsCollectionSlice';
 
 export const store = configureStore({
     reducer: {
@@ -17,7 +18,8 @@ export const store = configureStore({
         hintsWithOrderSlice,
         adminAppJSONFormation,
         loginAuthenticationSlice,
-        sessionValidationSlice
+        sessionValidationSlice,
+        saveHintsCollectionSlice
     },
 });
 
