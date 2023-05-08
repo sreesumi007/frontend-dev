@@ -100,9 +100,27 @@ const GraphEditor = () => {
   // Clear LocalStorage on reload - Ends
   const adminAppJSONFormation = (event: any) => {
     event.preventDefault();
-    $("#" + iden.SaveGraph).click();
-    console.log("Hints with Order -", hints);
-    console.log("Admin App Json -", adminAppJson);
+   
+    console.log("Hints with Order -", JSON.stringify(hints));
+    console.log("Admin App Json -", JSON.stringify(adminAppJson));
+      const saveHints = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(hints)
+      };
+      const saveQuesAndAns = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(adminAppJson)
+      };
+      fetch(
+        "http://localhost:8080/api/admin/saveHints",
+        saveHints
+      )
+        .then((response) => response.text())
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error));
+        $("#" + iden.SaveGraph).click();
   };
 
   useEffect(() => {
@@ -280,7 +298,7 @@ const GraphEditor = () => {
         body: json,
       };
       fetch(
-        "http://localhost:8080/api/v1/userAccounts/graphJson",
+        "http://localhost:8080/api/admin/saveGraph",
         requestOptions
       )
         .then((response) => response.text())
