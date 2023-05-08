@@ -32,6 +32,8 @@ import {
 import { hintsWithOrder } from "../../store/slices/hintsWithOrderSlice";
 import { useNavigate } from "react-router-dom";
 import { saveHintsFromUser } from "../../store/slices/saveHintsCollectionSlice";
+import { saveQuestionAnswer } from "../../store/slices/questionAndAnswerSlice";
+import { saveGraph } from "../../store/slices/saveGraphSlice";
 const GraphEditor = () => {
   const appOperations = useAppSelector(appCommonSliceRes);
   const adminAppJson = useAppSelector(adminAppJSON);
@@ -102,29 +104,37 @@ const GraphEditor = () => {
   const adminAppJSONFormation = async (event: any) => {
     event.preventDefault();
     let hintsString = JSON.stringify(hints);
-   
+    let questionAnswerString = JSON.stringify(adminAppJson);
+
     console.log("Hints with Order -", hintsString);
-    console.log("Admin App Json -", JSON.stringify(adminAppJson));
+    console.log("Admin App Json -", questionAnswerString);
     const saveHintsCollection = await dispatch(saveHintsFromUser(hintsString));
-    console.log("saveHintsCollection Result - ",saveHintsCollection.payload);
-      // const saveHints = {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(hints)
-      // };
-      // const saveQuesAndAns = {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(adminAppJson)
-      // };
-      // fetch(
-      //   "http://localhost:8080/api/admin/saveHints",
-      //   saveHints
-      // )
-      //   .then((response) => response.text())
-      //   .then((data) => console.log(data))
-      //   .catch((error) => console.error(error));
-        $("#" + iden.SaveGraph).click();
+    console.log("saveHintsCollection Result - ", saveHintsCollection.payload);
+    const saveQuestionAndAnswer = await dispatch(
+      saveQuestionAnswer(questionAnswerString)
+    );
+    console.log(
+      "saveQuestionAndAnswer Result - ",
+      saveQuestionAndAnswer.payload
+    );
+    // const saveHints = {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(hints)
+    // };
+    // const saveQuesAndAns = {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(adminAppJson)
+    // };
+    // fetch(
+    //   "http://localhost:8080/api/admin/saveHints",
+    //   saveHints
+    // )
+    //   .then((response) => response.text())
+    //   .then((data) => console.log(data))
+    //   .catch((error) => console.error(error));
+    $("#" + iden.SaveGraph).click();
   };
 
   useEffect(() => {
@@ -293,21 +303,28 @@ const GraphEditor = () => {
     });
     // Extra code for Deleting the Links - Ends
 
-    $("#" + iden.SaveGraph).click(() => {
+    $("#" + iden.SaveGraph).click(async () => {
       let json = JSON.stringify(graph.toJSON());
-      const graphJson = graph.toJSON();
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: json,
-      };
-      fetch(
-        "http://localhost:8080/api/admin/saveGraph",
-        requestOptions
-      )
-        .then((response) => response.text())
-        .then((data) => console.log(data))
-        .catch((error) => console.error(error));
+      const saveGraphJSON = await dispatch(
+        saveGraph(json)
+      );
+      console.log(
+        "saveGraphJSON Result - ",
+        saveGraphJSON.payload
+      );
+
+      // const requestOptions = {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: json,
+      // };
+      // fetch(
+      //   "http://localhost:8080/api/admin/saveGraph",
+      //   requestOptions
+      // )
+      //   .then((response) => response.text())
+      //   .then((data) => console.log(data))
+      //   .catch((error) => console.error(error));
       console.log("Graph JSON - ", graph.toJSON());
       setShowNameEdit(false);
       dispatch(saveGraphBtn(false));
@@ -316,7 +333,7 @@ const GraphEditor = () => {
       dispatch(toggleAddHints(false));
       graph.clear();
       // localStorage.clear();
-      // window.location.reload();
+      window.location.reload();
     });
 
     $("#" + iden.ClearGraph).click(() => {
@@ -506,7 +523,6 @@ const GraphEditor = () => {
                   localStorage.removeItem("admin");
                   window.location.reload();
                   navigate("/");
-                  
                 }}
                 style={{ float: "right" }}
               >
