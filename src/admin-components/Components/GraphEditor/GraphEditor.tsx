@@ -22,18 +22,21 @@ import {
   removeElementFromGraph,
   addLinksFromGraph,
   removeLinksFromGraph,
+  passSaveMapId,
 } from "../../store/adminAppCommonOperations";
 import GraphicalHints from "./PopupModal/GraphicalHints";
 import {
   adminAppJSON,
+  saveGraphMapIdForQuesAns,
   setGraphElementId,
   setGraphLinkId,
 } from "../../store/adminAppJSONFormation";
-import { hintsWithOrder } from "../../store/slices/hintsWithOrderSlice";
+import { hintsWithOrder, saveGraphMapIdForHints } from "../../store/slices/hintsWithOrderSlice";
 import { useNavigate } from "react-router-dom";
 import { saveHintsFromUser } from "../../store/slices/saveHintsCollectionSlice";
 import { saveQuestionAnswer } from "../../store/slices/questionAndAnswerSlice";
 import { saveGraph } from "../../store/slices/saveGraphSlice";
+import SaveConfirmation from "./PopupModal/SaveConfirmation";
 const GraphEditor = () => {
   const appOperations = useAppSelector(appCommonSliceRes);
   const adminAppJson = useAppSelector(adminAppJSON);
@@ -53,6 +56,8 @@ const GraphEditor = () => {
   const [showNameEdit, setShowNameEdit] = useState(false);
   const [showGraphicalHintAlert, setShowGraphicalHintAlert] = useState(false);
   const [hintModalShow, setHintModalShow] = useState(false);
+  const [saveConfirmationShow, setSaveConfirmationShow] = useState(false);
+  
 
   const disableSaveGraphBtn = () => {
     dispatch(saveGraphBtn(false));
@@ -94,6 +99,10 @@ const GraphEditor = () => {
 
   // Clear LocalStorage on reload - Starts
   useEffect(() => {
+    localStorage.setItem(
+      "StudentLogin",
+      "false"
+    );
     window.addEventListener("beforeunload", func.clearLocalStorage);
 
     return () => {
@@ -305,13 +314,24 @@ const GraphEditor = () => {
 
     $("#" + iden.SaveGraph).click(async () => {
       let json = JSON.stringify(graph.toJSON());
+      const isStudentLogin = JSON.stringify(localStorage.getItem("StudentLogin"));
       const saveGraphJSON = await dispatch(
-        saveGraph(json)
+        saveGraph({getGraphJSON:json,studentLogin:isStudentLogin})
       );
       console.log(
         "saveGraphJSON Result - ",
         saveGraphJSON.payload
       );
+
+      console.log(
+        "Student Login from Local Storage - ",
+        isStudentLogin
+      );
+      dispatch(passSaveMapId(saveGraphJSON.payload));
+      dispatch(saveGraphMapIdForHints(saveGraphJSON.payload));
+      dispatch(saveGraphMapIdForQuesAns(saveGraphJSON.payload));
+      setSaveConfirmationShow(true);
+      
 
       // const requestOptions = {
       //   method: "POST",
@@ -326,14 +346,18 @@ const GraphEditor = () => {
       //   .then((data) => console.log(data))
       //   .catch((error) => console.error(error));
       console.log("Graph JSON - ", graph.toJSON());
-      setShowNameEdit(false);
-      dispatch(saveGraphBtn(false));
-      dispatch(passGraphicalHintsOpen(false));
-      dispatch(toggleAddQues(false));
-      dispatch(toggleAddHints(false));
-      graph.clear();
+      // setShowNameEdit(false);
+      // dispatch(saveGraphBtn(false));
+      // dispatch(passGraphicalHintsOpen(false));
+      // dispatch(toggleAddQues(false));
+      // dispatch(toggleAddHints(false));
+      // graph.clear();
+      console.log(
+        "save Confirmation - ",
+        saveConfirmationShow
+      );
       // localStorage.clear();
-      window.location.reload();
+      // window.location.reload();
     });
 
     $("#" + iden.ClearGraph).click(() => {
@@ -488,11 +512,16 @@ const GraphEditor = () => {
                 <div className="bg-gradient-primary"></div>
               </div>
             </div>
+            <SaveConfirmation
+                show={saveConfirmationShow}
+                onHide={() => setSaveConfirmationShow(false)}
+              />
             <div className="col d-flex justify-content-end align-items-end position-absolute bottom-0 end-0">
               <button
                 type="button"
+                id="saveGraphJson"
                 className="btn btn-success btn-rounded me-2"
-                onClick={adminAppJSONFormation}
+                // onClick={adminAppJSONFormation}
                 disabled={!appOperations.saveGraphToggle}
               >
                 Save Graph
@@ -521,6 +550,7 @@ const GraphEditor = () => {
                 onClick={() => {
                   console.log("logout triggered");
                   localStorage.removeItem("admin");
+                  localStorage.removeItem("StudentLogin");
                   window.location.reload();
                   navigate("/");
                 }}

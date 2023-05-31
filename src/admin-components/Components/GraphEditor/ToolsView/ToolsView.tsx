@@ -43,6 +43,7 @@ const ToolsView = () => {
     dispatch(toggleAddHints(false));
   };
   const [isDirected, setIsDirected] = useState(false);
+  const [isStudentLogin, setIsStudentLogin] = useState(false);
 
   const handleToggle = () => {
     setIsDirected(!isDirected);
@@ -77,6 +78,30 @@ const ToolsView = () => {
             </label>
           </div>
           {/* Toggle button  -- Ends*/}
+          <br />
+          {/* Student Login  -- Start*/}
+          <h6 className="card-subtitle mb-2 text-muted text-center">
+            Student Login&nbsp;(Yes/No)
+          </h6>
+          <div
+            className="form-check form-switch"
+            style={{ marginLeft: "4rem" }}
+          >
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="toggleSwitch"
+              checked={isStudentLogin}
+              onChange={()=>{setIsStudentLogin(!isStudentLogin);localStorage.setItem(
+                "StudentLogin",
+                JSON.stringify(!isStudentLogin)
+              );}}
+            />
+            <label className="form-check-label" htmlFor="toggleSwitch">
+              {isStudentLogin ? "Yes" : "No"}
+            </label>
+          </div>
+          {/* Student Login  -- Ends*/}
         </div>
       </div>
       <br />
