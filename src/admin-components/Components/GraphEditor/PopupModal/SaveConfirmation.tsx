@@ -12,6 +12,7 @@ const SaveConfirmation = (props: any) => {
   const appOperations = useAppSelector(appCommonSliceRes);
   const hints = useAppSelector(hintsWithOrder);
   const adminAppJson = useAppSelector(adminAppJSON);
+  const dispatch = useAppDispatch();
 
   const adminAppJSONFormation = async (event: any) => {
     event.preventDefault();
@@ -47,8 +48,25 @@ const SaveConfirmation = (props: any) => {
     }
     window.location.reload();
   };
+  const cancelSaveConfirmation = async (event: any) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/deleteGraphById/${appOperations.saveMapId}`, {
+        method: 'DELETE',
+      });
 
-  const dispatch = useAppDispatch();
+      if (response.ok) {
+        props.onHide();
+        console.log('Deleted Successfully');
+      } else {
+        console.log('Failed to delete the example in backend');
+      }
+    } catch (error) {
+      console.log('An error occurred while deleting the example.');
+    }
+    props.onHide();
+  };
+
+  
 
   return (
     <Fragment>
@@ -70,9 +88,7 @@ const SaveConfirmation = (props: any) => {
             &nbsp;&nbsp;
             <button
               className="btn btn-primary"
-              onClick={() => {
-                props.onHide();
-              }}
+              onClick={cancelSaveConfirmation}
             >
               Cancel
             </button>
