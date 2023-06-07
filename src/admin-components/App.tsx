@@ -13,18 +13,17 @@ function App() {
   useEffect(() => {
     const sessionValidation = async () => {
       const adminToken = localStorage.getItem("admin");
+      localStorage.setItem("GraphicalHint", JSON.stringify(false));
       const results = await dispatch(
         sessionValidationFetch({ token: adminToken })
       );
       console.log("isExpired token - ", results.payload);
       if (results.payload === false) {
         navigate("/user");
-      } else if(results.payload === true) {
+      } else if (results.payload === true) {
         localStorage.removeItem("admin");
         navigate("/");
-      }
-      else
-      {
+      } else {
         navigate("/");
       }
       // navigate("/");

@@ -31,7 +31,10 @@ import {
   setGraphElementId,
   setGraphLinkId,
 } from "../../store/adminAppJSONFormation";
-import { hintsWithOrder, saveGraphMapIdForHints } from "../../store/slices/hintsWithOrderSlice";
+import {
+  hintsWithOrder,
+  saveGraphMapIdForHints,
+} from "../../store/slices/hintsWithOrderSlice";
 import { useNavigate } from "react-router-dom";
 import { saveHintsFromUser } from "../../store/slices/saveHintsCollectionSlice";
 import { saveQuestionAnswer } from "../../store/slices/questionAndAnswerSlice";
@@ -57,7 +60,6 @@ const GraphEditor = () => {
   const [showGraphicalHintAlert, setShowGraphicalHintAlert] = useState(false);
   const [hintModalShow, setHintModalShow] = useState(false);
   const [saveConfirmationShow, setSaveConfirmationShow] = useState(false);
-  
 
   const disableSaveGraphBtn = () => {
     dispatch(saveGraphBtn(false));
@@ -99,10 +101,7 @@ const GraphEditor = () => {
 
   // Clear LocalStorage on reload - Starts
   useEffect(() => {
-    localStorage.setItem(
-      "StudentLogin",
-      "false"
-    );
+    localStorage.setItem("StudentLogin", "false");
     window.addEventListener("beforeunload", func.clearLocalStorage);
 
     return () => {
@@ -164,7 +163,6 @@ const GraphEditor = () => {
       // cellViewNamespace: joint.shapes,
       // If anything not working please uncomment this and comment the el tag alone and uncomment at the end of the use effect - Ends
     });
-
     let contextMenuX = 240;
     let contextMenuY = 30;
 
@@ -220,8 +218,7 @@ const GraphEditor = () => {
       const isGraphicalHint = localStorage.getItem("GraphicalHint");
       console.log("Link id -", linkView.model.attributes.id);
       if (isGraphicalHint === "true") {
-        if (linkView.model.attributes.attrs.line.stroke === "#333333") {
-          console.log("Came into link if block");
+        if (linkView.model.attributes.attrs.line.stroke === "#333333" || linkView.model.attributes.attrs.line.stroke === "black") {
           linkView.model.attr("line/stroke", "blue");
           dispatch(addLinksFromGraph(linkView.model.attributes.id));
         } else {
@@ -232,6 +229,7 @@ const GraphEditor = () => {
     });
     paper.on("element:pointerclick", (element: any) => {
       const isGraphicalHint = localStorage.getItem("GraphicalHint");
+      console.log("Graphical Hints Called", isGraphicalHint);
       if (isGraphicalHint === "true") {
         if (
           element.model.attributes.attrs.body.stroke === "black" ||
@@ -314,24 +312,19 @@ const GraphEditor = () => {
 
     $("#" + iden.SaveGraph).click(async () => {
       let json = JSON.stringify(graph.toJSON());
-      const isStudentLogin = JSON.stringify(localStorage.getItem("StudentLogin"));
+      const isStudentLogin = JSON.stringify(
+        localStorage.getItem("StudentLogin")
+      );
       const saveGraphJSON = await dispatch(
-        saveGraph({getGraphJSON:json,studentLogin:isStudentLogin})
+        saveGraph({ getGraphJSON: json, studentLogin: isStudentLogin })
       );
-      console.log(
-        "saveGraphJSON Result - ",
-        saveGraphJSON.payload
-      );
+      console.log("saveGraphJSON Result - ", saveGraphJSON.payload);
 
-      console.log(
-        "Student Login from Local Storage - ",
-        isStudentLogin
-      );
+      console.log("Student Login from Local Storage - ", isStudentLogin);
       dispatch(passSaveMapId(saveGraphJSON.payload));
       dispatch(saveGraphMapIdForHints(saveGraphJSON.payload));
       dispatch(saveGraphMapIdForQuesAns(saveGraphJSON.payload));
       setSaveConfirmationShow(true);
-      
 
       // const requestOptions = {
       //   method: "POST",
@@ -352,10 +345,7 @@ const GraphEditor = () => {
       // dispatch(toggleAddQues(false));
       // dispatch(toggleAddHints(false));
       // graph.clear();
-      console.log(
-        "save Confirmation - ",
-        saveConfirmationShow
-      );
+      console.log("save Confirmation - ", saveConfirmationShow);
       // localStorage.clear();
       // window.location.reload();
     });
@@ -513,9 +503,9 @@ const GraphEditor = () => {
               </div>
             </div>
             <SaveConfirmation
-                show={saveConfirmationShow}
-                onHide={() => setSaveConfirmationShow(false)}
-              />
+              show={saveConfirmationShow}
+              onHide={() => setSaveConfirmationShow(false)}
+            />
             <div className="col d-flex justify-content-end align-items-end position-absolute bottom-0 end-0">
               <button
                 type="button"
