@@ -637,6 +637,7 @@ const GraphEditor = () => {
                         style={{ float: "right" }}
                         onClick={() => {
                           setShowNameEdit(true);
+                          setChangeMode(false);
                         }}
                       >
                         Edit Name
