@@ -638,6 +638,7 @@ const GraphEditor = () => {
                         onClick={() => {
                           setShowNameEdit(true);
                           setChangeMode(false);
+                          localStorage.setItem("GraphMode","false");
                         }}
                       >
                         Edit Name
